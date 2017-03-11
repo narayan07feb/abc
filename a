@@ -1,39 +1,52 @@
-try {
-
-			LOGGER.info(Thread.currentThread().getStackTrace()[1].getMethodName()+" :: START");
-			String	queryString=null;//,mbrQuery=null;
-
-			if(healthSafeId!=null) {
+public List<MbrPrtl> getMbrPrtl(String healthSafeId, String provisionMemberId, String portalShortNm, String firstNm,
+			String lastNm,Set<String> aliasFIrstNameList,Set<String> aliasLastNameList, String dob, String subscriberId, String zip, String ssn,String mbrPrtlSpcMbrId,String policyNbr) throws GlobalNavException {
+		try{
+			/*if(!StringUtils.isEmpty(sixDigitSsn)){
+				List<MbrPrtl> mbrPrtls=jpaMemberPortalRepository.findMbrPrtl(healthSafeId,provisionMemberId,portalShortNm,firstNm,lastNm,aliasFIrstNameList,aliasLastNameList,dob,subscriberId,zip,ssn,mbrPrtlSpcMbrId,policyNbr);
+				if(!CollectionUtils.isEmpty(mbrPrtls)){
+					List<MbrPrtl> mbrPrtlList=new ArrayList<MbrPrtl>();
+					for(MbrPrtl mbrPrtl:mbrPrtls){
+						if(mbrPrtl.getMbrByMbrId().getMdmMbrSsn().equalsIgnoreCase(sixDigitSsn))
+							mbrPrtlList.add(mbrPrtl);
+					}
+					return mbrPrtlList;
+				}
+				else{
+					return null;
+				}
 			}
-			queryString= "SELECT mp FROM MbrPrtl mp where mp.mbrByMbrId.healthSafeId = ?1";
-			//mbrQuery="SELECT m FROM Mbr m where m.healthSafeId = ?1 and mp.prtlByPrtlId.prtlId=?2";
-			//	CriteriaBuilder cb = em.getCriteriaBuilder();
-			
-			Query query = em.createQuery(queryString);
-			query.setParameter(1, healthSafeId);
-			LOGGER.info(Thread.currentThread().getStackTrace()[1].getMethodName()+" :: END");
-			return (List<MbrPrtl>)query.getResultList();
-
-		} catch(Exception  ex)
+			else{*/
+				return jpaMemberPortalRepository.findMbrPrtl(healthSafeId,provisionMemberId,portalShortNm,firstNm,lastNm,aliasFIrstNameList,aliasLastNameList,dob,subscriberId,zip,ssn,mbrPrtlSpcMbrId,policyNbr);
+			//}
+		} catch(GlobalNavException  ex)
 		{
-//			ex.printStackTrace();
-			MessagesType mts=new MessagesType();
+			throw ex;
+		}
+		catch(Exception  ex)
+		{
+			MessagesType mts = new MessagesType();
 			MessageType mt=new MessageType();
 			mt.setCode("500");
 			mt.setSeverity(Constants.Severity.EXCEPTION.name());
 			mt.setName(Constants.StatusMsgNm.NOTFOUND.name());
-			StringBuilder sb=new StringBuilder();
-
-			sb.append("Exception in lookup member portal table with HealthSafeId\n");
+			StringBuilder sb = new StringBuilder();
+			sb.append("Exception in lookup member/member portal tables with the given search criteria\n");
 			sb.append("HealthSafeId:'").append(healthSafeId).append("'\n");
+			sb.append("provisionMemberId :'").append(provisionMemberId).append("'\n"); 
+			sb.append("portalShortNm :'").append(portalShortNm).append("'\n");
+			sb.append("first Name :'").append(firstNm).append("'\n");
+			sb.append("last Name :'").append(lastNm).append("'\n");
+			sb.append("Date of Birth :'").append(dob).append("'\n");
+			sb.append("subscriberId :'").append(subscriberId).append("'\n");
+			sb.append("Zip Code :'").append(zip).append("'\n");
+			sb.append("SSN :'").append(ssn).append("'\n");
 			
 			mt.setDescription(sb.toString());
 			mts.getMessage().add(mt);
-			StatusType st=new StatusType();
+			StatusType st = new StatusType();
 			st.setMessages(mts);
-			
-			//if(LOGGER.isDebugEnabled())
-				//LOGGER.debug(mt.getDescription(),ex);
+		//	if(LOGGER.isDebugEnabled())
+		//		LOGGER.debug(mt.getDescription(),ex);
 			throw new GlobalNavException(st);
 		}
 	}
