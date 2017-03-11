@@ -1,0 +1,39 @@
+try {
+
+			LOGGER.info(Thread.currentThread().getStackTrace()[1].getMethodName()+" :: START");
+			String	queryString=null;//,mbrQuery=null;
+
+			if(healthSafeId!=null) {
+			}
+			queryString= "SELECT mp FROM MbrPrtl mp where mp.mbrByMbrId.healthSafeId = ?1";
+			//mbrQuery="SELECT m FROM Mbr m where m.healthSafeId = ?1 and mp.prtlByPrtlId.prtlId=?2";
+			//	CriteriaBuilder cb = em.getCriteriaBuilder();
+			
+			Query query = em.createQuery(queryString);
+			query.setParameter(1, healthSafeId);
+			LOGGER.info(Thread.currentThread().getStackTrace()[1].getMethodName()+" :: END");
+			return (List<MbrPrtl>)query.getResultList();
+
+		} catch(Exception  ex)
+		{
+//			ex.printStackTrace();
+			MessagesType mts=new MessagesType();
+			MessageType mt=new MessageType();
+			mt.setCode("500");
+			mt.setSeverity(Constants.Severity.EXCEPTION.name());
+			mt.setName(Constants.StatusMsgNm.NOTFOUND.name());
+			StringBuilder sb=new StringBuilder();
+
+			sb.append("Exception in lookup member portal table with HealthSafeId\n");
+			sb.append("HealthSafeId:'").append(healthSafeId).append("'\n");
+			
+			mt.setDescription(sb.toString());
+			mts.getMessage().add(mt);
+			StatusType st=new StatusType();
+			st.setMessages(mts);
+			
+			//if(LOGGER.isDebugEnabled())
+				//LOGGER.debug(mt.getDescription(),ex);
+			throw new GlobalNavException(st);
+		}
+	}
