@@ -5,14 +5,12 @@ try {
 
 			if(healthSafeId!=null) {
 			}
-			queryString= "SELECT mp FROM MbrPrtl mp where mp.mbrByMbrId.healthSafeId = ?1";
-			//mbrQuery="SELECT m FROM Mbr m where m.healthSafeId = ?1 and mp.prtlByPrtlId.prtlId=?2";
-			//	CriteriaBuilder cb = em.getCriteriaBuilder();
+			queryString= "SELECT mbrRgst FROM MbrRgstTyp mbrRgst where mbrRgst.mbrRgstTypId= ?1";
 			
 			Query query = em.createQuery(queryString);
-			query.setParameter(1, healthSafeId);
+			query.setParameter(1, mbr.getRegistrationTypId());
 			LOGGER.info(Thread.currentThread().getStackTrace()[1].getMethodName()+" :: END");
-			return (List<MbrPrtl>)query.getResultList();
+			return (MbrRgstTyp>)query.getResult();
 
 		} catch(Exception  ex)
 		{
@@ -24,8 +22,8 @@ try {
 			mt.setName(Constants.StatusMsgNm.NOTFOUND.name());
 			StringBuilder sb=new StringBuilder();
 
-			sb.append("Exception in lookup member portal table with HealthSafeId\n");
-			sb.append("HealthSafeId:'").append(healthSafeId).append("'\n");
+			sb.append("Exception in lookup member registration type table with registration type Id\n");
+			sb.append("RegistrationTypeId:'").append(mbr.getRegistrationTypId()).append("'\n");
 			
 			mt.setDescription(sb.toString());
 			mts.getMessage().add(mt);
